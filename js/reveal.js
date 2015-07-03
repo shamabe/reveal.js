@@ -50,6 +50,7 @@
 
 			// Display a presentation progress bar
 			progress: true,
+			timer: 5,
 
 			// Display the page number of the current slide
 			slideNumber: false,
@@ -452,8 +453,9 @@
 		dom.background = createSingletonNode( dom.wrapper, 'div', 'backgrounds', null );
 
 		// Progress bar
-		dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span>' );
+		dom.progress = createSingletonNode( dom.wrapper, 'div', 'progress', '<span></span><div class="turtle"></div>' );
 		dom.progressbar = dom.progress.querySelector( 'span' );
+		dom.turtle = dom.progress.querySelector( '.turtle' );
 
 		// Arrow controls
 		createSingletonNode( dom.wrapper, 'aside', 'controls',
@@ -947,6 +949,20 @@
 
 		if( config.progress && dom.progress ) {
 			dom.progress.addEventListener( 'click', onProgressClicked, false );
+
+			// XXX
+			document.addEventListener('dblclick', function() {
+				var minutes = prompt('プレゼン時間は何分？', Math.floor(config.timer));
+				if (minutes) {
+					config.timer = minutes;
+				}
+			}, false);
+
+			var pos = 0;
+			var startTime = Date.now();
+			setInterval(function() {
+				dom.turtle.style.marginLeft = (Date.now() - startTime) / 1000 / 60 / config.timer * dom.wrapper.offsetWidth + 'px';
+			}, 100);
 		}
 
 		if( config.focusBodyOnPageVisibilityChange ) {
